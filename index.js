@@ -39,8 +39,44 @@ async function run() {
       const result = await blogCollection.findOne({ _id: new ObjectId(id) });
       res.send(result);
     });
+    // post the blog post data.
+    app.post("/post", async (req, res) => {
+      const data = req.body;
+      const result = await blogCollection.insertOne(data);
+      res.send(result);
+    });
 
-    // comment post
+    // remove the blog post post
+    app.delete("/post/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await blogCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Update the post 
+    app.get("/post/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await blogCollection.findOne(query);
+      res.send(result);
+    });
+    app.patch("/post/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = {_id: new ObjectId(id)};
+      const upadate = {
+        $set: {
+          title: data.title,
+          category: data.category,
+          description: data.description
+        }
+      }
+      const result = await blogCollection.updateOne(query, upadate);
+      res.send(result);
+    });
+
+    // comment on the post
     app.post("/comment", async (req, res) => {
       const query = req.body;
       const result = await commentCollection.insertOne(query);
